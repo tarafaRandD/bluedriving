@@ -76,11 +76,10 @@ To improve the speed while detecting new devices, we recommend to switch on the 
 
 Dependencies
 ------------
-python-bluez
-python-lightblue
-python-pygame
-python-gps
-python-simplejson
+pybluez
+gpsd-py3
+pygame
+requests
 
 Usage 
 -----

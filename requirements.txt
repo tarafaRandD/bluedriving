@@ -1,0 +1,4 @@
+pybluez
+gpsd-py3
+pygame
+requests
