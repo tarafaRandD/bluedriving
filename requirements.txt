@@ -1,0 +1,3 @@
+pybluez
+pygame
+gpsd-py3

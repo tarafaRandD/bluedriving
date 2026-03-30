@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 #  Copyright (C) 2009  Veronica Valeros, Juan Manuel Abrigo, Sebastian Garcia
 #
 #  This program is free software; you can redistribute it and/or modify
@@ -44,18 +44,18 @@ import time
 try:
     import sqlite3
 except:
-    print 'Library needed. apt-get install python-sqlite'
+    print('')
     exit(-1)
 try:
     import bluetooth
 except:
-    print 'Library needed. apt-get install python-bluez'
+    print('')
     exit(-1)
 import time
 try:
     from gps import *;
 except:
-    print 'Library needed. apt-get install python-gps . Includes gpsd and gpsd-clients'
+    print('')
     exit(-1)
 import threading
 #import getCoordinatesFromAddress
@@ -64,13 +64,13 @@ from bluedrivingWebServer import createWebServer
 try:
     import lightblue
 except:
-    print 'Library needed. apt-get install python-lightblue'
+    print('')
     exit(-1)
-import Queue
+import queue
 try:
     import pygame
 except:
-    print 'Library needed. apt-get install python-pygame'
+    print('')
     exit(-1)
 import getpass
 import smtplib
@@ -185,18 +185,18 @@ def getGPS():
                 pass
 
     except KeyboardInterrupt:
-        print 'Exiting received in getGPS() function. It may take a few seconds.'
+        print('')
         threadbreak = True
     except Exception as inst:
-        print 'Exception getGPS() function.'
+        print('')
         threadbreak = True
-        print 'Ending threads, exiting when finished'
+        print('')
         print type(inst) # the exception instance
         print inst.args # arguments stored in .args
         print inst # _str_ allows args to printed directly
         x, y = inst # _getitem_ allows args to be unpacked directly
-        print 'x =', x
-        print 'y =', y
+        print(''), x
+        print(''), y
         sys.exit(1)
 
 def get_address_from_gps(location_gps):
@@ -214,7 +214,7 @@ def get_address_from_gps(location_gps):
     try:
         if location_gps:
             if debug:
-                print 'Coordinates: {}'.format(location_gps)
+                print('').format(location_gps)
             try:
                 # If the location is already stored, we get it.
                 address = address_cache[location_gps]
@@ -225,7 +225,7 @@ def get_address_from_gps(location_gps):
                     [coordinates,address] = getCoordinates(location_gps)
                     address = address.encode('utf-8')
                     if debug:
-                        print 'Coordinates: {} Address: {}'.format(coordinates,address)
+                        print('').format(coordinates,address)
                     
                     address_cache[location_gps] = address
                 else:
@@ -233,21 +233,21 @@ def get_address_from_gps(location_gps):
         return address
 
     except KeyboardInterrupt:
-        print 'Exiting received in get_address_from_gps(location_gps) function. It may take a few seconds.'
+        print('')
         threadbreak = True
     except Exception as inst:
-        print 'Exception in get_address_from_gps(location_gps)'
-        print 'Received coordinates: {}'.format(location_gps)
-        print 'Retrieved coordinates: {}'.format(coordinates)
-        print 'Retrieved Address: {}'.format(address)
+        print('')
+        print('').format(location_gps)
+        print('').format(coordinates)
+        print('').format(address)
         threadbreak = True
-        print 'Ending threads, exiting when finished'
+        print('')
         print type(inst) # the exception instance
         print inst.args # arguments stored in .args
         print inst # _str_ allows args to printed directly
         x, y = inst # _getitem_ allows args to be unpacked directly
-        print 'x =', x
-        print 'y =', y
+        print(''), x
+        print(''), y
         sys.exit(1)
 
 # Discovering function
@@ -264,12 +264,12 @@ def bluetooth_discovering():
 
     try:
         if debug:
-            print '# In bluetooth_discovering() function'
-            print '# debug={0}'.format(debug)
-            print '# verbose={0}'.format(verbose)
-            print '# threadbreak={0}'.format(threadbreak)
-            print '# flag_sound={0}'.format(flag_sound)
-            print '# global_location={0}'.format(global_location)
+            print('')
+            print('').format(debug)
+            print('').format(verbose)
+            print('').format(threadbreak)
+            print('').format(flag_sound)
+            print('').format(global_location)
             print
             
         counter=0
@@ -278,15 +278,15 @@ def bluetooth_discovering():
 
             try:
                 if debug:
-                    print '# In bluetooth_discovering() function'
-                    print '# Discovering devices...'
+                    print('')
+                    print('')
                     print
                 # Discovering devices
                 data = bluetooth.bluez.discover_devices(duration=3,lookup_names=True)
                 #data = bluetooth.discover_devices(duration=3,lookup_names=True)
                 if debug:
-                    print '# In bluetooth_discovering() function'
-                    print '# Data retrieved: {}'.format(data)
+                    print('')
+                    print('').format(data)
                     print
                 
                 if data:
@@ -294,20 +294,20 @@ def bluetooth_discovering():
                     # We start a new thread that process the information retrieved 
                     loc = global_location
                     if debug:
-                        print '# We start a new thread that process the information retrieved'
-                        print '# loc={}'.format(loc)
-                        print '# threading.Thread(None,target = process_devices,args=(data,loc))'
-                        print '# process_device_information_thread.setDaemon(True)'
+                        print('')
+                        print('').format(loc)
+                        print('')
+                        print('')
                         print
                     if verbose:
-                        print 'Found: {} devices'.format(len(data))
+                        print('').format(len(data))
                     process_device_information_thread = threading.Thread(None,target = process_devices,args=(data,loc))
                     process_device_information_thread.setDaemon(True)
                     process_device_information_thread.start()
                 else: 
                     # If there is NO data:
                     # we print a dash and play a sound
-                    print '  -'
+                    print('')
                     if flag_sound:
                         if global_location:
                             # If we have gps, play a sound
@@ -315,29 +315,29 @@ def bluetooth_discovering():
                             pygame.mixer.music.play()
                         else:
                             if debug:
-                                print 'No global location on discover_devices'
+                                print('')
                                 print global_location
                             # If we do not have gps, play a sound
                             pygame.mixer.music.load('nodevice-withoutgps.ogg')
                             pygame.mixer.music.play()
                 counter=0
             except KeyboardInterrupt:
-                print 'Exiting received in bluetooth_discovering() function, inside the while loop. It may take a few seconds.'
+                print('')
                 threadbreak = True
             except:
                 counter=counter+1
                 if debug:
-                    print 'An exception occured on the bluetooth_discovering() function. Trying to continue the scanning'
+                    print('')
                 if counter > 9000:
-                    print 'Too many exceptions in bluetooth_discovering() function'
+                    print('')
                     threadbreak = True
-                    print 'Ending threads, exiting when finished'
+                    print('')
                     print type(inst) # the exception instance
                     print inst.args # arguments stored in .args
                     print inst # _str_ allows args to printed directly
                     x, y = inst # _getitem_ allows args to be unpacked directly
-                    print 'x =', x
-                    print 'y =', y
+                    print(''), x
+                    print(''), y
                     sys.exit(1)
 
 
@@ -345,18 +345,18 @@ def bluetooth_discovering():
         return True
 
     except KeyboardInterrupt:
-        print 'Exiting received in bluetooth_discovering function. It may take a few seconds.'
+        print('')
         threadbreak = True
     except Exception as inst:
-        print 'Exception in bluetooth_discovering() function'
+        print('')
         threadbreak = True
-        print 'Ending threads, exiting when finished'
+        print('')
         print type(inst) # the exception instance
         print inst.args # arguments stored in .args
         print inst # _str_ allows args to printed directly
         x, y = inst # _getitem_ allows args to be unpacked directly
-        print 'x =', x
-        print 'y =', y
+        print(''), x
+        print(''), y
         sys.exit(1)
 
 def process_devices(device_list,loc):
@@ -381,9 +381,9 @@ def process_devices(device_list,loc):
     try:
         if device_list:
             if debug:
-                print '# In process_devices(device_list,loc) function'
-                print '# device_list len={}'.format(len(device_list))
-                print '# loc={}'.format(loc)
+                print('')
+                print('').format(len(device_list))
+                print('').format(loc)
             # We process all devices retrieved in one run of the discovery function
             for d in device_list:
                 flag_new_device = False
@@ -396,7 +396,7 @@ def process_devices(device_list,loc):
                     list_devices[d[0]]=d[1]
                     flag_new_device = True
                     if debug:
-                        print 'New device found'
+                        print('')
 
                 # We setup the timestamp
                 ftime = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime())
@@ -432,23 +432,23 @@ def process_devices(device_list,loc):
                 device_services = []
                 if flag_lookup_services:
                     if debug:
-                        print '# flag_lookup_services={}'.format(flag_lookup_services)
+                        print('').format(flag_lookup_services)
                     try:
                         services_data = lightblue.findservices(d[0])
                     except:
-                        print 'Exception in process_devices, lightblue.findservices(d[0])'
+                        print('')
                         services_data=[]
                     if services_data:
                         for i in services_data:
                             device_services.append(i[2])
 
                 if len(device_services) > 1:
-                    print '  {:<24}  {:<17}  {:<30}  {:<27}  {:<30}  {:<20}'.format(ftime,d[0],d[1],location_gps,location_address.split(',')[0],device_services[0])
+                    print('').format(ftime,d[0],d[1],location_gps,location_address.split(',')[0],device_services[0])
                     for service in device_services[1:]:
-                        print '  {:<24}  {:<17}  {:<30}  {:<27}  {:<30}  {:<20}'.format('','','','','',service)
-                        #print '\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t{:<30}'.format(service)
+                        print('').format('','','','','',service)
+                        #print('').format(service)
                 else:
-                    print '  {:<24}  {:<17}  {:<30}  {:<27}  {:<30}  {:<20}'.format(ftime,d[0],d[1],location_gps,location_address.split(',')[0],device_services)
+                    print('').format(ftime,d[0],d[1],location_gps,location_address.split(',')[0],device_services)
                     
                 if flag_sound:
                     if flag_new_device:
@@ -461,22 +461,22 @@ def process_devices(device_list,loc):
                 queue_devices.put([ftime,d[0],d[1],location_gps,location_address,device_services])
 
                 if debug:
-                    print 'Data loaded to queue'
+                    print('')
         # no devices?
         
     except KeyboardInterrupt:
-        print 'Exiting. It may take a few seconds.'
+        print('')
         threadbreak = True
     except Exception as inst:
-        print 'Exception in process_devices() function'
+        print('')
         threadbreak = True
-        print 'Ending threads, exiting when finished'
+        print('')
         print type(inst) # the exception instance
         print inst.args # arguments stored in .args
         print inst # _str_ allows args to printed directly
         x, y = inst # _getitem_ allows args to be unpacked directly
-        print 'x =', x
-        print 'y =', y
+        print(''), x
+        print(''), y
         sys.exit(1)
 
 def db_create_database(database_name):
@@ -491,7 +491,7 @@ def db_create_database(database_name):
         # We check if the database exists
         if not os.path.exists(database_name):
             if debug:
-                print 'Creating database'
+                print('')
             # Creating database
             connection = sqlite3.connect(database_name)
             # Creating tables
@@ -501,24 +501,24 @@ def db_create_database(database_name):
             connection.execute("CREATE TABLE Notes(Id INTEGER, Note TEXT)")
             connection.execute("CREATE TABLE Alarms(Id INTEGER, Alarm TEXT)")
             if debug:
-                print 'Database created'
+                print('')
         else:
             if debug:
-                print 'Database already exist'
+                print('')
 
     except KeyboardInterrupt:
-        print 'Exiting. It may take a few seconds.'
+        print('')
         threadbreak = True
     except Exception as inst:
-        print 'Exception in db_create_database(database_name) function'
+        print('')
         threadbreak = True
-        print 'Ending threads, exiting when finished'
+        print('')
         print type(inst) # the exception instance
         print inst.args # arguments stored in .args
         print inst # _str_ allows args to printed directly
         x, y = inst # _getitem_ allows args to be unpacked directly
-        print 'x =', x
-        print 'y =', y
+        print(''), x
+        print(''), y
         sys.exit(1)
 
 def db_get_database_connection(database_name):
@@ -534,22 +534,22 @@ def db_get_database_connection(database_name):
             db_create_database(database_name)
         connection = sqlite3.connect(database_name)
         if debug:
-            print 'Database connection retrieved'
+            print('')
         return connection
 
     except KeyboardInterrupt:
-        print 'Exiting. It may take a few seconds.'
+        print('')
         threadbreak = True
     except Exception as inst:
-        print 'Exception in get_database_connection(database_name) function'
+        print('')
         threadbreak = True
-        print 'Ending threads, exiting when finished'
+        print('')
         print type(inst) # the exception instance
         print inst.args # arguments stored in .args
         print inst # _str_ allows args to printed directly
         x, y = inst # _getitem_ allows args to be unpacked directly
-        print 'x =', x
-        print 'y =', y
+        print(''), x
+        print(''), y
         sys.exit(1)
 
 def db_get_device_id(connection,bdaddr,device_information):
@@ -572,25 +572,25 @@ def db_get_device_id(connection,bdaddr,device_information):
                 mac_id = mac_id.fetchall()
 
             if debug:
-                print 'Macid in db_get_device_id() function: {}'.format(mac_id)
+                print('').format(mac_id)
             return mac_id[0][0]
         except:
-            print 'Device Id could not be retrieved. BDADDR: {}'.format(bdaddr)
+            print('').format(bdaddr)
             return False
 
     except KeyboardInterrupt:
-        print 'Exiting. It may take a few seconds.'
+        print('')
         threadbreak = True
     except Exception as inst:
-        print 'Exception in db_get_device_id() function'
+        print('')
         threadbreak = True
-        print 'Ending threads, exiting when finished'
+        print('')
         print type(inst) # the exception instance
         print inst.args # arguments stored in .args
         print inst # _str_ allows args to printed directly
         x, y = inst # _getitem_ allows args to be unpacked directly
-        print 'x =', x
-        print 'y =', y
+        print(''), x
+        print(''), y
         sys.exit(1)
 
 def db_add_device(connection,bdaddr,device_information):
@@ -606,26 +606,26 @@ def db_add_device(connection,bdaddr,device_information):
             connection.execute("INSERT OR IGNORE INTO Devices (Mac,Info) VALUES (?,?)",(bdaddr,repr(device_information)))
             connection.commit()
             if debug:
-                print 'New device added'
+                print('')
             return True
         except:
             if debug:
-                print 'Device already exists'
+                print('')
             return False
         
     except KeyboardInterrupt:
-        print 'Exiting. It may take a few seconds.'
+        print('')
         threadbreak = True
     except Exception as inst:
-        print 'Exception in db_add_device() function'
+        print('')
         threadbreak = True
-        print 'Ending threads, exiting when finished'
+        print('')
         print type(inst) # the exception instance
         print inst.args # arguments stored in .args
         print inst # _str_ allows args to printed directly
         x, y = inst # _getitem_ allows args to be unpacked directly
-        print 'x =', x
-        print 'y =', y
+        print(''), x
+        print(''), y
         sys.exit(1)
 
 def db_update_device(connection,device_id,device_information):
@@ -641,28 +641,28 @@ def db_update_device(connection,device_id,device_information):
             connection.execute("UPDATE Devices SET Info=? WHERE Id=?", (repr(device_information), repr(device_id)))
             connection.commit()
             if debug:
-                print 'Device information updated'
+                print('')
             return True
         except:
             if debug:
-                print 'Device information not updated'
-                print 'Device ID: {}'.format(device_id)
-                print 'Device Information: {}'.format(device_information)
+                print('')
+                print('').format(device_id)
+                print('').format(device_information)
             return False
 
     except KeyboardInterrupt:
-        print 'Exiting. It may take a few seconds.'
+        print('')
         threadbreak = True
     except Exception as inst:
-        print 'Exception in db_update_device() function'
+        print('')
         threadbreak = True
-        print 'Ending threads, exiting when finished'
+        print('')
         print type(inst) # the exception instance
         print inst.args # arguments stored in .args
         print inst # _str_ allows args to printed directly
         x, y = inst # _getitem_ allows args to be unpacked directly
-        print 'x =', x
-        print 'y =', y
+        print(''), x
+        print(''), y
         sys.exit(1)
 
 def db_add_location(connection,device_id,location_gps,first_seen,location_address,device_name):
@@ -678,30 +678,30 @@ def db_add_location(connection,device_id,location_gps,first_seen,location_addres
             connection.execute("INSERT INTO Locations(MacId, GPS, FirstSeen, LastSeen, Address, Name) VALUES (?, ?, ?, ?, ?, ?)",(int(device_id), repr(location_gps),repr(first_seen),repr(first_seen),repr(location_address),repr(device_name.replace("'","''"))))
             connection.commit()
             if debug:
-                print 'Location added'
+                print('')
         except:
             if debug:
-                print 'Location not added'
-                print 'Device ID: {}'.format(device_id)
-                print 'Device Name: {}'.format(device_name)
-                print 'GPS Location: {}'.format(location_gps)
-                print 'First seen: {}'.format(first_seen)
-                print 'Last seen: {}'.format(first_seen)
+                print('')
+                print('').format(device_id)
+                print('').format(device_name)
+                print('').format(location_gps)
+                print('').format(first_seen)
+                print('').format(first_seen)
             return False
 
     except KeyboardInterrupt:
-        print 'Exiting. It may take a few seconds.'
+        print('')
         threadbreak = True
     except Exception as inst:
-        print 'Exception in db_add_location() function'
+        print('')
         threadbreak = True
-        print 'Ending threads, exiting when finished'
+        print('')
         print type(inst) # the exception instance
         print inst.args # arguments stored in .args
         print inst # _str_ allows args to printed directly
         x, y = inst # _getitem_ allows args to be unpacked directly
-        print 'x =', x
-        print 'y =', y
+        print(''), x
+        print(''), y
         sys.exit(1)
 
 def db_update_location(connection,device_id,location_gps,first_seen):
@@ -717,31 +717,31 @@ def db_update_location(connection,device_id,location_gps,first_seen):
             connection.execute("UPDATE Locations SET LastSeen=? WHERE MacId=? AND GPS=?",(repr(first_seen), int(device_id), repr(location_gps)))
             connection.commit()
             if debug:
-                print 'Location updated'
-                print 'Device ID: {}'.format(device_id)
-                print 'GPS Location: {}'.format(location_gps)
-                print 'Last seen: {}'.format(first_seen)
+                print('')
+                print('').format(device_id)
+                print('').format(location_gps)
+                print('').format(first_seen)
         except:
             if debug:
-                print 'Location not updated'
-                print 'Device ID: {}'.format(device_id)
-                print 'GPS Location: {}'.format(location_gps)
-                print 'Last seen: {}'.format(first_seen)
+                print('')
+                print('').format(device_id)
+                print('').format(location_gps)
+                print('').format(first_seen)
             return False
 
     except KeyboardInterrupt:
-        print 'Exiting. It may take a few seconds.'
+        print('')
         threadbreak = True
     except Exception as inst:
-        print 'Exception in db_update_location() function'
+        print('')
         threadbreak = True
-        print 'Ending threads, exiting when finished'
+        print('')
         print type(inst) # the exception instance
         print inst.args # arguments stored in .args
         print inst # _str_ allows args to printed directly
         x, y = inst # _getitem_ allows args to be unpacked directly
-        print 'x =', x
-        print 'y =', y
+        print(''), x
+        print(''), y
         sys.exit(1)
 
 def device_alert(device_id,device_name,database_name,location_gps,location_address,last_seen):
@@ -782,18 +782,18 @@ def device_alert(device_id,device_name,database_name,location_gps,location_addre
         connection.close()
 
     except KeyboardInterrupt:
-        print 'Exiting. It may take a few seconds.'
+        print('')
         threadbreak = True
     except Exception as inst:
-        print 'Exception in device_alert() function'
+        print('')
         threadbreak = True
-        print 'Ending threads, exiting when finished'
+        print('')
         print type(inst) # the exception instance
         print inst.args # arguments stored in .args
         print inst # _str_ allows args to printed directly
         x, y = inst # _getitem_ allows args to be unpacked directly
-        print 'x =', x
-        print 'y =', y
+        print(''), x
+        print(''), y
         sys.exit(1)
 
 def store_device_information(database_name):
@@ -854,7 +854,7 @@ def store_device_information(database_name):
                         # If we have a device information, then we update the information for the device
                         result = db_update_device(connection,device_id,device_information)
                         if not result:
-                            print 'Device information could not be updated'
+                            print('')
                         # We try to store a new location
                         result = db_add_location(connection,device_id,location_gps,first_seen,location_address,device_name)
 
@@ -862,22 +862,22 @@ def store_device_information(database_name):
                         if not result:
                             result = db_update_location(connection,device_id,location_gps,last_seen)
 
-                    #print '  {:<24}  {:<17}  {:<30}  {:<27}  {:<30}  {:<20}'.format(temp[0],temp[1],temp[2],temp[3],temp[4],temp[5])
+                    #print('').format(temp[0],temp[1],temp[2],temp[3],temp[4],temp[5])
             time.sleep(2)
 
     except KeyboardInterrupt:
-        print 'Exiting. It may take a few seconds.'
+        print('')
         threadbreak = True
     except Exception as inst:
-        print 'Exception in store_device_information() function'
+        print('')
         threadbreak = True
-        print 'Ending threads, exiting when finished'
+        print('')
         print type(inst) # the exception instance
         print inst.args # arguments stored in .args
         print inst # _str_ allows args to printed directly
         x, y = inst # _getitem_ allows args to be unpacked directly
-        print 'x =', x
-        print 'y =', y
+        print(''), x
+        print(''), y
         sys.exit(1)
 
 ##########
@@ -925,7 +925,7 @@ def main():
         if opt in ("-l", "--not-lookup-services"): flag_lookup_services = False
         if opt in ("-g", "--not-gps"): flag_gps = False; flag_internet = False
         if opt in ("-f", "--fake-gps"): fake_gps = arg; flag_gps = False;
-        if opt in ("-m", "--mail-user"): mail_username = arg; print 'Provide your gmail password for given user: ',; mail_password = getpass.getpass()
+        if opt in ("-m", "--mail-user"): mail_username = arg; print(''),; mail_password = getpass.getpass()
         if opt in ("-p", "--webserver-port"): webserver_port = int(arg)
         if opt in ("-I", "--webserver-ip"): webserver_ip = str(arg)
     try:
@@ -936,19 +936,19 @@ def main():
 
         if flag_lookup_services:
             # We print the header for printing results on console
-            print '  {:<24}  {:<17}  {:<30}  {:<27}  {:<30}  {:<20}'.format("Date","MAC address","Device name","Global Position","Aproximate address","Info")
-            print '  {:<24}  {:<17}  {:<30}  {:<27}  {:<30}  {:<20}'.format("----","-----------","-----------","---------------","------------------","----")
+            print('').format("Date","MAC address","Device name","Global Position","Aproximate address","Info")
+            print('').format("----","-----------","-----------","---------------","------------------","----")
         else:
             # We print the header for printing results on console
-            print '  {:<24}  {:<17}  {:<30}  {:<27}  {:<30}'.format("Date","MAC address","Device name","Global Position","Aproximate address")
-            print '  {:<24}  {:<17}  {:<30}  {:<27}  {:<30}'.format("----","-----------","-----------","---------------","------------------")
+            print('').format("Date","MAC address","Device name","Global Position","Aproximate address")
+            print('').format("----","-----------","-----------","---------------","------------------")
 
         # Here we start the thread to get gps location        
         if flag_gps and not flag_fake_gps:
             if debug:
-                print '# Here we start the thread to get gps location'
-                print '# flag_gps={0}'.format(flag_gps)
-                print '# fake_gps={0}'.format(fake_gps)
+                print('')
+                print('').format(flag_gps)
+                print('').format(fake_gps)
                 print
             #gps_thread = threading.Thread(None,target=get_coordinates_from_gps)
             gps_thread = threading.Thread(None,target=getGPS)
@@ -957,19 +957,19 @@ def main():
         elif fake_gps:
             # Here we are setting up the global location to use the fake gps
             if debug:
-                print '# Here we are setting up the global location to use the fake gps'
-                print '# flag_gps={0}'.format(flag_gps)
-                print '# fake_gps={0}'.format(fake_gps)
+                print('')
+                print('').format(flag_gps)
+                print('').format(fake_gps)
             global_location = fake_gps
             if debug:
-                print '# global_location={0}'.format(global_location)
+                print('').format(global_location)
                 print
         
         # Here we start the web server
         if flag_run_webserver:
             if debug:
-                print '# Here we start the thread to get the web server running'
-                print '# flag_run_webserver={}'.format(flag_run_webserver)
+                print('')
+                print('').format(flag_run_webserver)
                 print
             #webserver_thread = threading.Thread(None,createWebServer,"web_server",args=(webserver_port,webserver_ip))
             webserver_thread = threading.Thread(None,createWebServer,"web_server",args=(webserver_port,webserver_ip,database_name))
@@ -977,15 +977,15 @@ def main():
             webserver_thread.start()
         else:
             if debug:
-                print '# The webserver flag is not set. Not running webserver.'
-                print '# flag_run_webserver={}'.format(flag_run_webserver)
+                print('')
+                print('').format(flag_run_webserver)
                 print
 
         # Here we start the discovering devices threads
         if debug:
-            print '# Here we start the discovering devices thread'
-            print '# threading.Thread(None,target = bluetooth_discovering)'
-            print '# bluetooth_discovering_thread.setDaemon(True)'
+            print('')
+            print('')
+            print('')
             print
         bluetooth_discovering_thread = threading.Thread(None,target = bluetooth_discovering)
         bluetooth_discovering_thread.setDaemon(True)
@@ -993,9 +993,9 @@ def main():
 
         # Here we start the thread that will continuosly store data to the database
         if debug:
-            print '# Here we start the thread that will continuosly store data to the database'
-            print '# threading.Thread(None,target = store_device_information,args=(database_name,))'
-            print '# store_device_information_thread.setDaemon(True)'
+            print('')
+            print('')
+            print('')
             print
         store_device_information_thread = threading.Thread(None,target = store_device_information,args=(database_name,))
         store_device_information_thread.setDaemon(True)
@@ -1004,20 +1004,20 @@ def main():
         # Initializating sound
         if flag_sound:
             if debug:
-                print '# Initializating soud'
-                print '# pygame.init()'
+                print('')
+                print('')
             try:
                 pygame.init()
             except:
-                print '(!) pygame couldn''t been initialized. Mutting bluedriving.'
+                print('')'t been initialized. Mutting bluedriving.'
                 flag_sound=False
-                print '(!) flag_sound=()'.format(flag_sound)
+                print('').format(flag_sound)
                 print
 
         # This options are for live-options interaction
         k = ""
         while True:
-            k = raw_input()
+            k = input()
             if k == 'a' or k == 'A':
                 if flag_alarm: 
                     flag_alarm = False
@@ -1071,10 +1071,10 @@ def main():
                 break
 
         threadbreak = True
-        print '\n[+] Exiting'
+        print('')
 
     except KeyboardInterrupt:
-        print 'Exiting. It may take a few seconds.'
+        print('')
         threadbreak = True
         time.sleep(1)
         for thread in threading.enumerate():
@@ -1083,15 +1083,15 @@ def main():
             except:
                 pass
     except Exception as inst:
-        print 'Error in main() function'
-        print 'Ending threads, exiting when finished'
+        print('')
+        print('')
         threadbreak = True
         print type(inst) # the exception instance
         print inst.args # arguments stored in .args
         print inst # _str_ allows args to printed directly
         x, y = inst # _getitem_ allows args to be unpacked directly
-        print 'x =', x
-        print 'y =', y
+        print(''), x
+        print(''), y
         sys.exit(1)
 
 

@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python3
 #  Copyright (C) 2009  Veronica Valeros, Juan Manuel Abrigo, Sebastian Garcia
 #
 #  This program is free software; you can redistribute it and/or modify
@@ -39,13 +39,9 @@
 # Standard imports
 import getopt
 import sys
-import BaseHTTPServer
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from os import curdir, sep
-try:
-    import simplejson as json
-except:
-    print 'Library needed. apt-get install python-simplejson'
-    exit(-1)
+import json
         
 try:
     import sqlite3
@@ -116,7 +112,7 @@ def createWebServer(port, ip_addresss, current_database):
 
     # Create a webserver
     try:
-        httpd = BaseHTTPServer.HTTPServer(server_address, MyHandler)
+        httpd = HTTPServer(server_address, MyHandler)
         # Get the socket
         sa = httpd.socket.getsockname()
 
@@ -804,7 +800,7 @@ def alarm_to(type_ofcall, mac, alarm_type):
 
 
 
-class MyHandler (BaseHTTPServer.BaseHTTPRequestHandler):
+class MyHandler (BaseHTTPRequestHandler):
     """ Handle the requests """
 
     def log_message(self, format, *args):

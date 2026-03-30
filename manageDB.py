@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 #  Copyright (C) 2009  Veronica Valeros, Juan Manuel Abrigo, Sebastian Garcia
 #
 #  This program is free software; you can redistribute it and/or modify

@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python3
 #  Copyright (C) 2009  Veronica Valeros
 #
 #  This program is free software; you can redistribute it and/or modify
@@ -29,12 +29,8 @@
 import os, pwd, string, sys
 import getopt
 import re
-import urllib2
-try:
-    import simplejson
-except:
-    print 'Library needed. apt-get install python-simplejson'
-    exit(-1)
+from urllib.request import urlopen
+import json
 
 
 
@@ -116,8 +112,8 @@ def getCoordinates(address):
                 query = api_url+address
                 
                 try:
-                    answer = urllib2.urlopen(query)
-                    content = simplejson.load(answer)
+                    answer = urlopen(query)
+                    content = json.load(answer)
                     lat = content['results'][0]['geometry']['location']['lat']
                     lng = content['results'][0]['geometry']['location']['lng']
                 
