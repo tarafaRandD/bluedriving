@@ -7,7 +7,7 @@ import asyncio
 import bleak
 import copy
 import getpass
-import gps3
+import gps3.agps3 as agps3
 import os
 import queue
 import re
@@ -90,7 +90,7 @@ def getGPS():
     global global_location, threadbreak
 
     try:
-        the_connection = gps3.GPSDSocket()
+        the_connection = agps3.GPSDSocket()
         the_connection.connect()
         the_connection.watch()
         while not threadbreak:
