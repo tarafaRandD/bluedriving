@@ -3,8 +3,11 @@
 """
 
 import argparse
+import asyncio
+import bleak
 import copy
 import getpass
+import gps3
 import os
 import queue
 import re
@@ -13,16 +16,6 @@ import sqlite3
 import sys
 import threading
 import time
-
-try:
-    import bluetooth
-except ImportError as e:
-    raise ImportError('bluetooth library is required (pybluez): pip install pybluez') from e
-
-try:
-    from gps import gps, WATCH_ENABLE
-except ImportError:
-    gps = None
 
 try:
     import pygame
@@ -96,29 +89,27 @@ def usage():
 def getGPS():
     global global_location, threadbreak
 
-    if gps is None:
-        if debug:
-            print('gps module not available, skipping GPS thread')
-        return
-
     try:
-        gps_session = gps(mode=WATCH_ENABLE)
+        the_connection = gps3.GPSDSocket()
+        the_connection.connect()
+        the_connection.watch()
         while not threadbreak:
             try:
-                location = next(gps_session)
-            except StopIteration:
+                for new_data in the_connection:
+                    if new_data:
+                        if 'lat' in new_data and 'lon' in new_data:
+                            if not global_location and pygame:
+                                try:
+                                    pygame.mixer.music.load('gps.ogg')
+                                    pygame.mixer.music.play()
+                                except Exception:
+                                    pass
+                            global_location = new_data
+                        time.sleep(0.5)
+                        break
+            except Exception:
                 time.sleep(0.5)
-                continue
-
-            if isinstance(location, dict) and 'lat' in location and 'lon' in location:
-                if not global_location and pygame:
-                    try:
-                        pygame.mixer.music.load('gps.ogg')
-                        pygame.mixer.music.play()
-                    except Exception:
-                        pass
-                global_location = location
-            time.sleep(0.5)
+                pass
 
     except KeyboardInterrupt:
         print('Exiting received in getGPS() function.')
@@ -162,13 +153,17 @@ def bluetooth_discovering():
         while not threadbreak:
             try:
                 if debug:
-                    print('Discovering devices...')
-                data = bluetooth.discover_devices(duration=3, lookup_names=True)
+                    print('Discovering BLE devices...')
+                async def get_ble_devices():
+                    devices = await bleak.discover()
+                    return devices
+                devices = asyncio.run(get_ble_devices())
+                data = [(d.address, d.name or 'Unknown') for d in devices]
 
                 if data:
                     loc = global_location
                     if verbose:
-                        print(f'Found: {len(data)} devices')
+                        print(f'Found: {len(data)} BLE devices')
                     t = threading.Thread(target=process_devices, args=(data, loc))
                     t.daemon = True
                     t.start()
@@ -226,17 +221,7 @@ def process_devices(device_list, loc):
             if location_gps and flag_internet:
                 location_address = get_address_from_gps(location_gps)
 
-            device_services = []
-            if flag_lookup_services:
-                try:
-                    for svc in bluetooth.find_service(address=bdaddr):
-                        if 'name' in svc and svc['name']:
-                            device_services.append(svc['name'])
-                        elif 'protocol' in svc:
-                            device_services.append(svc['protocol'])
-                except Exception as exc:
-                    if debug:
-                        print('Service discovery failed:', exc)
+            device_services = ['BLE']
 
             info_line = (ftime, bdaddr, name, location_gps, location_address or 'unknown', device_services)
             if len(device_services) > 1:

@@ -1,4 +1,4 @@
-pybluez
-gpsd-py3
+bleak
+gps3
 pygame
 requests
