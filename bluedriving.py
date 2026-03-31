@@ -160,7 +160,11 @@ def bluetooth_discovering():
                     print('Discovering BLE devices...')
                 async def get_ble_devices():
                     print("Starting BLE scan...")
-                    devices = await bleak.discover(timeout=10.0)
+                    scanner = bleak.BleakScanner()
+                    await scanner.start()
+                    await asyncio.sleep(10.0)
+                    await scanner.stop()
+                    devices = list(scanner.discovered_devices.values())
                     print(f"Scan complete, found {len(devices)} devices")
                     return devices
                 devices = asyncio.run(get_ble_devices())
