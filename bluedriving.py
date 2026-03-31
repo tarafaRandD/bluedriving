@@ -91,7 +91,11 @@ def getGPS():
 
     try:
         the_connection = agps3.GPSDSocket()
-        the_connection.connect()
+        try:
+            the_connection.connect()
+        except Exception as conn_exc:
+            print('GPSD not available, disabling GPS thread:', conn_exc)
+            return
         the_connection.watch()
         while not threadbreak:
             try:
@@ -155,20 +159,19 @@ def bluetooth_discovering():
                 if debug:
                     print('Discovering BLE devices...')
                 async def get_ble_devices():
-                    devices = await bleak.discover()
+                    print("Starting BLE scan...")
+                    devices = await bleak.discover(timeout=10.0)
+                    print(f"Scan complete, found {len(devices)} devices")
                     return devices
                 devices = asyncio.run(get_ble_devices())
                 data = [(d.address, d.name or 'Unknown') for d in devices]
 
+                print(f'Found: {len(data)} BLE devices')
                 if data:
                     loc = global_location
-                    if verbose:
-                        print(f'Found: {len(data)} BLE devices')
                     t = threading.Thread(target=process_devices, args=(data, loc))
                     t.daemon = True
                     t.start()
-                else:
-                    print('  -')
                     if flag_sound and pygame:
                         try:
                             if global_location:
@@ -183,8 +186,7 @@ def bluetooth_discovering():
                 print('Exiting received in bluetooth_discovering()')
                 threadbreak = True
             except Exception as exc:
-                if debug:
-                    print('Exception in bluetooth_discovering():', exc)
+                print('Exception in bluetooth_discovering():', exc)
                 time.sleep(1)
 
         threadbreak = True
